@@ -11,6 +11,15 @@ include:
 {% endif %}
 
 {% for name, repo in plugins_pillar.items() %}
+elasticsearch-remove-{{ name }}:
+  cmd.run:
+    - name: /usr/share/elasticsearch/bin/{{ plugin_bin }} remove {{ name }}
+    - onchanges:
+      - elasticsearch_pkg
+    - unless: test ! -x /usr/share/elasticsearch/plugins/{{ name }}
+{% endfor %}
+
+{% for name, repo in plugins_pillar.items() %}
 elasticsearch-{{ name }}:
   cmd.run:
     - name: /usr/share/elasticsearch/bin/{{ plugin_bin }} install -b {{ repo }}
